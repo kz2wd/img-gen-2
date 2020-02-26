@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw
 import math
 import random
 from image_creator import ImageCreator
+from layer import Layer
 
 
 def better_round(value):
@@ -34,5 +35,8 @@ def paint(pixels_array, color, shape):
         print('Failed')
 
 
-img_creator = ImageCreator(250, 250, (73, 103, 221), "my_image.png")
-img_creator.divide_image(random.randint(5, 20), (-60, -60, -60))
+layers = [Layer(lambda x, y: x**3 * y**3, [1000, 100000], lambda c: (c[0], c[1] + c[2], c[2]))]
+
+img_creator = ImageCreator(250, 250, (73, 103, 221), "my_image.png", layers)
+# img_creator.divide_image(10, (20, 20, 20))
+img_creator.apply_layers()

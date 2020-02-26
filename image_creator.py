@@ -6,11 +6,12 @@ import my_utilities as ut
 
 
 class ImageCreator:
-    def __init__(self, height, width, base_color, name):
+    def __init__(self, height, width, base_color, name, layers=None):
         self.height = height
         self.width = width
         self.base_color = base_color
         self.name = name
+        self.layers = layers
 
         self.image = Image.new("RGB", (self.height, self.width), self.base_color)
         self.pixels = self.image.load()
@@ -22,9 +23,9 @@ class ImageCreator:
         pass
 
     def point_image(self, quantity, color_shading):
-        color = (ut.cycle(self.base_color[0] + color_shading[0], 255),
-                 ut.cycle(self.base_color[1] + color_shading[1], 255),
-                 ut.cycle(self.base_color[2] + color_shading[2], 255))
+        color = ((self.base_color[0] + color_shading[0]) % 256,
+                 (self.base_color[1] + color_shading[1]) % 256,
+                 (self.base_color[2] + color_shading[2]) % 256)
 
         for point in range(quantity):
             coord = random.randint(0, self.height - 1), random.randint(0, self.width - 1)
@@ -56,6 +57,16 @@ class ImageCreator:
         self.pixels[0, self.height - 1] = (0, 0, 0)
         self.pixels[self.width - 1, 0] = (0, 0, 0)
         self.pixels[self.width - 1, self.height - 1] = (0, 0, 0)
+        self.image.save(self.name)
+
+    def apply_layers(self):
+        for layer in self.layers:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if layer.visible_range[0] < \
+                            layer.function((x / self.width) * 100, (y / self.height) * 100) \
+                            < layer.visible_range[1]:
+                        self.pixels[x, y] = layer.color_modifier(self.pixels[x, y])
         self.image.save(self.name)
 
 

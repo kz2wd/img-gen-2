@@ -12,12 +12,6 @@ def divide_to_superior(value, divisor):
     return value
 
 
-def cycle(value, value_max):
-    while value > value_max:
-        value -= value_max
-    return value
-
-
 def better_round(value):
     if value - int(value) > 0.5:
         return int(value) + 1
